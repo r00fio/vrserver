@@ -4,25 +4,8 @@
 
 var express = require('express');
 var robot = require("robotjs");
-var bodyParser = require("body-parser");
 
 var router = express.Router();
-
-
-router.get('/', function (req, res) {
-    setCORS(res);
-    res.send(200)
-});
-
-router.post('/', function (req, res) {
-    console.log(req.body);
-    // robot.keyToggle(req.body.key1, req.body.press1);
-    // robot.keyToggle(req.body.key2, req.body.press2);
-
-
-    setCORS(res);
-    res.sendStatus(200)
-});
 
 var startCoordinate = {x:0, y:0};
 
@@ -58,7 +41,16 @@ router.post('/touches', function (req, res) {
     setCORS(res);
     res.sendStatus(200)
 });
-
+router.post('/mouseclick', function (req, res) {
+    if (req.body.button=='left') {
+        robot.mouseClick(req.body.button, false);
+    }
+    if (req.body.button=='right') {
+        robot.keyTap('space');      
+    }
+    setCORS(res);
+    res.sendStatus(200)
+});
 router.post('/touchstart', function (req, res) {
     console.log(req.body);
     console.log("touchStart");
