@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My first Chartist Tests</title>
+    <link rel="stylesheet"
+          href="javascripts/chartist/dist/chartist.min.css">
+    <link rel="stylesheet"
+          href="stylesheets/style.css">
+    <script src="javascripts/chartist/dist/chartist.min.js"></script>
+    <script src="javascripts/jQuery/jquery.js"></script>
+    <script src="javascripts/chartist-plugin-zoom/src/scripts/chartist-plugin-zoom.js"></script>
+    <style>
+        .ct-zoom-rect {
+            fill: rgba(200, 100, 100, 0.3);
+            stroke: red;
+        }
+
+        body {
+            min-height: 2000px;
+        }
+
+        .fixed {
+            position: fixed;
+        }
+
+        .ct-point {
+            stroke-width: 20px;
+            stroke-linecap: round;
+        }
+    </style>
+    <script type="text/javascript">
+
+        var interval = 100;
+        var run = 0;
+        function clearChart() {
+            $.get('http://localhost:3000/orientation/clear', function (data) {
+                buildChart();
+            });
+        }
+        function calibrate() {
+            $.get('http://localhost:3000/orientation/calibrate', function (data) {
+                buildChart();
+            });
+        }
+
+        function stopCollection() {
+            clearInterval(run);
+            interval = 1000000000
+            $.get('http://localhost:3000/orientation/stop', function (data) {
+                run = setInterval(buildChart, interval);
+            });
+
+
+        }
+        function resumeCollection() {
+            clearInterval(run);
+            interval = 100
+            $.get('http://localhost:3000/orientation/resume', function (data) {
+                run = setInterval(buildChart, interval);
+            });
+
+
+        }
+
+        var resetFnc;
+
+        function onZoomF(chart, reset) {
+            document.getElementById('reset').style.display = 'inline';
+            resetFnc = reset;
+        }
+
+        function reset() {
+            resetFnc && resetFnc();
+            resetFnc = null;
+            document.getElementById('reset').style.display = 'none';
+        }
+        function buildChart() {
+
+            $.get('http://localhost:3000/orientation/chart', function (data) {
+
+                var dir = data.direction
+                data.direction = undefined;
+                document.getElementById('dirx').innerHTML = dir[0];
+                document.getElementById('dirz').innerHTML = dir[1];
+                document.getElementById('reverseX').innerHTML = 'X: ' + dir[2];
+                document.getElementById('reverseZ').innerHTML = 'Z: ' + dir[3];
+                var options = {
+                    // Don't draw the line chart points
+                    showPoint: false,
+                    // Disable line smoothing
+                    lineSmooth: false,
+                    chartPadding: {
+                        top: 50,
+                        right: 30,
+                        left: 40,
+                        bottom: 50
+                    },
+                    axisX: {
+                        type: Chartist.AutoScaleAxis
+                    },
+                    axisY: {
+                        type: Chartist.AutoScaleAxis
+                    },
+                    plugins: [
+                        Chartist.plugins.zoom({onZoom: onZoomF, pointClipOffset: 10})
+                    ]
+                };
+                new Chartist.Line('.ct-chart', data, options);
+            })
+        }
+
+
+        $(document).ready(function () {
+            run = setInterval(buildChart, interval);
+        })
+    </script>
+</head>
+<body>
+<!-- Site content goes here !-->
+<div class="controls">
+    <div><a id="reset" href="#" style="display:none" onclick='return reset()'> Reset </a></div>
+    <div><a id="stop" href="#" onclick='stopCollection()'> Stop </a></div>
+    <div><a id="resume" href="#" onclick='resumeCollection()'> Resume </a></div>
+    <div><a id="clear" href="#" onclick='clearChart()'> Clear </a></div>
+    <div><a id="calibrate" href="#" onclick='calibrate()'> Calibrate </a></div>
+</div>
+<div>
+    <div id="dirx"></div>
+    <div id="dirz"></div>
+    <div id="reverseX"></div>
+    <div id="reverseZ"></div>
+</div>
+
+<div class="ct-chart ct-perfect-fourth"></div>
+
+</body>
+</html>
