@@ -66,6 +66,7 @@ accelerometer.sensivity = {};
 accelerometer.sensivity.x = 35000;
 accelerometer.sensivity.y = 35000;
 accelerometer.sensivity.z = 35000;
+accelerometer.timeoutDone = true;
 var reverseX = false;
 var reverseZ = false;
 
@@ -88,8 +89,15 @@ router.post('/accelerometer', function (req, res) {
     //     old.az > accelerometer.stop.z + accelerometer.sensivity.z ||
     //     old.az < accelerometer.stop.z - accelerometer.sensivity.z
     // ) {
-        reverseZ = true;
-        reverseX = true;
+    reverseZ = true;
+    reverseX = true;
+    if (accelerometer.timeoutDone) {
+        accelerometer.timeoutDone = false;
+        setTimeout(function () {
+            accelerometer.timeoutDone = true;
+        }, 300)
+    }
+     
     // }
     // G.push({x: Number(req.body.aT), y: Number(req.body.ax)});
     // B.push({x: Number(req.body.aT), y: Number(req.body.ay)});
@@ -116,8 +124,14 @@ router.post('/', function (req, res) {
             dirZ = 'right'
         }
     } else {
+        // if ((x - z < 300 && x - z > 0) || (z - x < 300 && z - x > 0)) {
+        //     stopPointX = x;
+        //     stopPointZ = z;
+        // }
         dirZ = 'stop'
-        reverseZ = false;
+        if (accelerometer.timeoutDone) {
+            reverseZ = false;    
+        }
     }
 
     if (x > stopPointX + sensivity.stopPointX) {
@@ -134,8 +148,14 @@ router.post('/', function (req, res) {
             dirX = 'up'
         }
     } else {
+        // if ((x - z < 300 && x - z > 0) || (z - x < 300 && z - x > 0)) {
+        //     stopPointX = x;
+        //     stopPointZ = z;
+        // }
         dirX = 'stop';
-        reverseX = false;
+        if (accelerometer.timeoutDone) {
+            reverseX = false;    
+        }
     }
     moveX();
     moveZ();
