@@ -84,6 +84,11 @@
                 document.getElementById('dirz').innerHTML = dir[1];
                 document.getElementById('reverseX').innerHTML = 'X: ' + dir[2];
                 document.getElementById('reverseZ').innerHTML = 'Z: ' + dir[3];
+                document.getElementById('spx').innerHTML = 'XX: ' + dir[4];
+                document.getElementById('spz').innerHTML = 'ZZ: ' + dir[5];
+                document.getElementById('astopy').innerHTML = 'Accelerometer.stop.y: ' + dir[7];
+                document.getElementById('dif').innerHTML = 'dif: ' + dir[6];
+
                 var options = {
                     // Don't draw the line chart points
                     showPoint: false,
@@ -124,11 +129,15 @@
     <div><a id="clear" href="#" onclick='clearChart()'> Clear </a></div>
     <div><a id="calibrate" href="#" onclick='calibrate()'> Calibrate </a></div>
 </div>
-<div>
-    <div id="dirx"></div>
-    <div id="dirz"></div>
+<div >
+    <div style="font-size: 26px" id="dirx"></div>
+    <div style="font-size: 26px"  id="dirz"></div>
     <div id="reverseX"></div>
     <div id="reverseZ"></div>
+    <div id="spx"></div>
+    <div id="spz"></div>
+    <div id="dif"></div>
+    <div id="astopy"></div>
 </div>
 
 <div class="ct-chart ct-perfect-fourth"></div>
