@@ -145,6 +145,10 @@ var smaMax = 1;
 var smaMaY = 3;
 var posX = 0;
 var posY = 0;
+var stopPointCounterX = 0;
+var stopPointCounterZ = 0;
+var stopPointCounterMaxX = 20;
+var stopPointCounterMaxZ = 45;
 
 function smaX(newValue) {
     if (++posX > smaMax) {
@@ -259,10 +263,26 @@ router.post('/', function (req, res) {
     }
     moveX();
     moveZ();
-//x-kor
-    //z-blue
+
     old.x = x;
     old.z = z;
+    if (dirX == 'stop') {
+        if (++stopPointCounterX > stopPointCounterMaxX) {
+            stopPointCounterX = 0;
+            stopPointX = x;
+        }
+    }else {
+        stopPointCounterX = 0;
+    }
+    if (dirZ == 'stop') {
+        if (++stopPointCounterZ > stopPointCounterMaxZ) {
+            stopPointCounterZ = 0;
+            stopPointZ = z;
+        }
+    } else {
+        stopPointCounterZ = 0;
+    }
+
 
 
     // console.log( + ' ' + Math.round(Number(req.body.y) * 10000)+ ' ' + Math.round(Number(req.body.z) * 10000));
