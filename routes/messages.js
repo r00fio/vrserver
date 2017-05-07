@@ -14,7 +14,7 @@ var G = [];
 var A = [];
 var B = [];
 router.get('/', function (req, res) {
-    res.sendfile('./public/achart.html'); // load the single view file (angular will handle the page changes on the front-end)
+    res.sendFile(__dirname + '/achart.html'); // load the single view file (angular will handle the page changes on the front-end)
 });
 
 router.get('/chart', function (req, res) {
