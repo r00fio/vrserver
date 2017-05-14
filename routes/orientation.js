@@ -19,19 +19,16 @@ var gz = [];
 var reverseX = false;
 var reverseZ = false;
 
-
+var offset = 4000;
 var accelerometer = {};
 accelerometer.data = {};
 accelerometer.stop = {
-    x: 900,
-    y: 900,
-    z: 900
-};
-accelerometer.sensivity = {
-    x: 40000, y: 40000, z: 40000
+    x: 3970,
+    y: 3970,
+    z: 3970
 };
 
-var sensivity = {stop: {x: 600, z: 900}};
+var sensivity = {stop: {x: 180, z: 500}};
 
 var old = {};
 var dirX = 'stop';
@@ -40,8 +37,8 @@ var stop = false;
 
 var stopPointCounterX = 0;
 var stopPointCounterZ = 0;
-var stopPointCounterMaxX = 20;
-var stopPointCounterMaxZ = 45;
+var stopPointCounterMaxX = 100;
+var stopPointCounterMaxZ = 100;
 
 
 router.get('/', function (req, res) {
@@ -53,7 +50,7 @@ router.get('/chart', function (req, res) {
     // res.send(JSON.stringify({series:[chart]}));
     res.send(JSON.stringify({
         series: [mx, my, mz, ax, ay, az, gx, gy, gz],
-        direction: [dirX, dirZ, reverseX, reverseZ, stopPointX, stopPointZ, accelerometer.stop.y]
+        direction: [dirX, dirZ, accelerometer.stop.x, accelerometer.stop.z]
     }));
 });
 
@@ -88,28 +85,26 @@ router.get('/resume', function (req, res) {
 });
 
 router.get('/calibrate', function (req, res) {
-    accelerometer.stop.x = old.ax;
-    accelerometer.stop.y = old.ay;
-    accelerometer.stop.z = old.az;
+    accelerometer.stop.x = old.x;
+    accelerometer.stop.y = old.y;
+    accelerometer.stop.z = old.z;
     sendResponse(res);
 });
 
 router.post('/', function (req, res) {
-    sendResponse(res);
 
-    var t = new Date().getTime();
+    accelerometer.data.x = Number(req.body.ax) + offset;
+    accelerometer.data.y = Number(req.body.ay) + offset;
+    accelerometer.data.z = Number(req.body.az) + offset;
 
-    accelerometer.data.x = Number(req.body.ax);
-    accelerometer.data.y = Number(req.body.ay);
-    accelerometer.data.z = Number(req.body.az);
+    // var t = new Date().getTime();
+    // ax.push({x: t, y: accelerometer.data.x});
+    // ay.push({x: t, y: accelerometer.data.y});
+    // az.push({x: t, y: accelerometer.data.z});
 
-    ax.push({x: t, y: accelerometer.data.x * 100});
-    ay.push({x: t, y: accelerometer.data.y * 100});
-    az.push({x: t, y: accelerometer.data.z * 100});
-
-    if (accelerometer.data.z > stopPointZ + sensivity.stop.z) {
+    if (accelerometer.data.z > accelerometer.stop.z + sensivity.stop.z) {
         dirZ = 'right'
-    } else if (accelerometer.data.z < stopPointZ - sensivity.stop.z) {
+    } else if (accelerometer.data.z < accelerometer.stop.z - sensivity.stop.z) {
         dirZ = 'left'
     } else {
         dirZ = 'stop';
@@ -122,10 +117,11 @@ router.post('/', function (req, res) {
     } else {
         dirX = 'stop';
     }
-    // moveX();
-    // moveZ();
+    moveX();
+    moveZ();
 
     old.x = accelerometer.data.x;
+    old.y = accelerometer.data.y;
     old.z = accelerometer.data.z;
 
     if (dirX === 'stop') {
@@ -139,14 +135,14 @@ router.post('/', function (req, res) {
     if (dirZ === 'stop') {
         if (++stopPointCounterZ > stopPointCounterMaxZ) {
             stopPointCounterZ = 0;
-            accelerometer.stop.z = accelerometer.data.z
+            accelerometer.stop.z = accelerometer.data.z;
         }
     } else {
         stopPointCounterZ = 0;
     }
-
-
     // console.log( + ' ' + Math.round(Number(req.body.y) * 10000)+ ' ' + Math.round(Number(req.body.z) * 10000));
+    sendResponse(res);
+
 });
 
 function moveX() {

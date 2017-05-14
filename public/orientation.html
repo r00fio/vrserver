@@ -80,13 +80,10 @@
 
                 var dir = data.direction
                 data.direction = undefined;
-                document.getElementById('dirx').innerHTML = dir[0];
-                document.getElementById('dirz').innerHTML = dir[1];
-                document.getElementById('reverseX').innerHTML = 'X: ' + dir[2];
-                document.getElementById('reverseZ').innerHTML = 'Z: ' + dir[3];
-                document.getElementById('spx').innerHTML = 'XX: ' + dir[4];
-                document.getElementById('spz').innerHTML = 'ZZ: ' + dir[5];
-                document.getElementById('astopy').innerHTML = 'Accelerometer.stop.y: ' + dir[6];
+                document.getElementById('direction.x').innerHTML = 'Detected LEFT and RIGHT(X): ' + dir[0];
+                document.getElementById('direction.z').innerHTML = 'Detected UP and DOWN(Z): ' + dir[1];
+                document.getElementById('stop.point.x').innerHTML = 'Calibrated Stop X: ' + dir[2];
+                document.getElementById('stop.point.z').innerHTML = 'Calibrated Stop Z: ' + dir[3];
 
                 var options = {
                     // Don't draw the line chart points
@@ -122,23 +119,24 @@
 <body>
 <!-- Site content goes here !-->
 <div class="controls">
-    <div><a id="reset" href="#" style="display:none" onclick='return reset()'> Reset </a></div>
-    <div><a id="stop" href="#" onclick='stopCollection()'> Stop </a></div>
-    <div><a id="resume" href="#" onclick='resumeCollection()'> Resume </a></div>
-    <div><a id="clear" href="#" onclick='clearChart()'> Clear </a></div>
-    <div><a id="calibrate" href="#" onclick='calibrate()'> Calibrate </a></div>
+    <div>
+        <div><a id="reset" href="#" style="display:none" onclick='return reset()'> Reset </a></div>
+        <div><a id="stop" href="#" onclick='stopCollection()'> Stop </a></div>
+        <div><a id="resume" href="#" onclick='resumeCollection()'> Resume </a></div>
+        <div><a id="clear" href="#" onclick='clearChart()'> Clear </a></div>
+        <div><a id="calibrate" href="#" onclick='calibrate()'> Calibrate </a></div>
+    </div>
+    <div class="controls">
+        <div>
+            <div style="font-size: 26px; color: green" id="direction.x"></div>
+            <div style="font-size: 26px; color: orange" id="direction.z"></div>
+        </div>
+        <div>
+            <div style="font-size: 26px; color: green" id="stop.point.x"></div>
+            <div style="font-size: 26px; color: orange" id="stop.point.z"></div>
+        </div>
+    </div>
 </div>
-<div >
-    <div style="font-size: 26px" id="dirx"></div>
-    <div style="font-size: 26px"  id="dirz"></div>
-    <div id="reverseX"></div>
-    <div id="reverseZ"></div>
-    <div id="spx"></div>
-    <div id="spz"></div>
-    <div id="dif"></div>
-    <div id="astopy"></div>
-</div>
-
 <div class="ct-chart ct-perfect-fourth"></div>
 
 </body>
